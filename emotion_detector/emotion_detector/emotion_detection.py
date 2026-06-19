@@ -11,17 +11,32 @@ def run_emotion_detector(text_to_analyze):
     payload = { "raw_document": { "text": text_to_analyze } }
 
     response = requests.post(url, headers=headers, json=payload)
+    status_code = response.status_code
+
+    if status_code == 400:
+        return {
+            "anger": "None",
+            "disgust": "None",
+            "fear": "None",
+            "joy": "None",
+            "sadness": "None",
+            "dominant_emotion" : "Invalid text! Please try again!"
+        }
+
+  
     response_json = response.json()
+
+    #print(status_code)
     emotion = response_json["emotionPredictions"][0]["emotion"]
 
     result = {
-    "anger": emotion["anger"],
-    "disgust": emotion["disgust"],
-    "fear": emotion["fear"],
-    "joy": emotion["joy"],
-    "sadness": emotion["sadness"],
-    "dominant_emotion" : max(emotion, key=emotion.get)
-}
+        "anger": emotion["anger"],
+        "disgust": emotion["disgust"],
+        "fear": emotion["fear"],
+        "joy": emotion["joy"],
+        "sadness": emotion["sadness"],
+        "dominant_emotion" : max(emotion, key=emotion.get)
+    }
     
     return result
 
